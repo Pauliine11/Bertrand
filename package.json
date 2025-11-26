@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check-secrets": "grep -r 'sk-' src/ --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' && echo '❌ WARNING: Possible API keys found!' || echo '✅ No hardcoded API keys found'",
+    "pre-push": "npm run check-secrets && git status | grep -q '.env.local' && echo '❌ ERROR: .env.local should not be committed!' && exit 1 || echo '✅ Safe to push'"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.10",
