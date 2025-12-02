@@ -4,12 +4,20 @@ Application Next.js élégante avec éditeur Markdown et chat IA propulsé par O
 
 ## ✨ Fonctionnalités
 
-- 💬 **Chat IA** - Conversez avec Bertrand, votre majordome virtuel
+### **Core Features**
+- 💬 **Chat IA** - Conversez avec Bertrand propulsé par GPT-3.5
 - 📝 **Éditeur Markdown** - Éditeur avec prévisualisation en temps réel
 - 🔄 **Versioning** - Historique complet avec navigation entre versions
 - 💾 **Auto-save** - Sauvegarde automatique après 2 secondes d'inactivité
 - ✨ **Mode Draft** - L'IA modifie directement votre document
-- 🎨 **Interface élégante** - Design raffiné inspiré d'un majordome
+
+### **UI/UX Enhancements** ⭐ NEW
+- 🎛️ **Sidebar Collapsible** - Gagnez de l'espace (256px → 64px)
+- ⚡ **Suggestions de Prompts** - Démarrez rapidement avec des templates
+- 📋 **Copy to Clipboard** - Copiez les réponses en un clic
+- ⌨️ **Raccourcis Clavier** - Productivité maximale (Ctrl+S, Ctrl+D, etc.)
+- 🎨 **Interface élégante** - Design raffiné avec sidebar et navigation intelligente
+- 📱 **Layout Responsive** - S'adapte automatiquement à vos besoins
 
 ## 🚀 Démarrage Rapide
 
@@ -116,6 +124,18 @@ Active un mode spécial où l'IA modifie directement votre document.
 - Résumé/développement
 
 Plus de détails : voir [DRAFT_MODE.md](./DRAFT_MODE.md)
+
+## ⌨️ Raccourcis Clavier
+
+Travaillez plus vite avec ces raccourcis :
+
+| Raccourci | Action | Description |
+|-----------|--------|-------------|
+| `Ctrl/Cmd + S` | Sauvegarder | Sauvegarde et télécharge le document |
+| `Ctrl/Cmd + D` | Toggle Draft | Active/désactive le Mode Draft |
+| `Ctrl/Cmd + K` | Focus Chat | Place le curseur dans le champ de chat |
+
+💡 Cliquez sur l'icône ⌨️ en bas à gauche pour voir tous les raccourcis disponibles.
 
 ## 🔒 Sécurité
 

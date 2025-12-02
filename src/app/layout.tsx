@@ -1,13 +1,28 @@
 import './globals.css';
+import './themes/minimal.css';
 import { AppProviders } from './providers';
 import { Metadata } from 'next';
-import { Cormorant_Garamond } from 'next/font/google';
-import { Navbar } from '@/components/Navbar';
+import { Geist, Geist_Mono, Cormorant_Garamond } from 'next/font/google';
+import { ClerkProvider } from '@clerk/nextjs';
+import { frFR } from '@clerk/localizations'
+
+const geistSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist-sans',
+  display: 'swap',
+});
+
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-geist-mono',
+  display: 'swap',
+});
 
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['700'],
   variable: '--font-cormorant',
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -17,13 +32,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className="min-h-screen">
-      <body className={`bg-[#0f172a] text-[#fdf6e3] min-h-screen ${cormorantGaramond.variable}`}>
-        <AppProviders>
-          <Navbar />
-          {children}
-        </AppProviders>
-      </body>
-    </html>
+    <ClerkProvider localization={frFR}>
+      <html lang="fr" className="min-h-screen">
+        <body className={`bg-white text-gray-900 min-h-screen ${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} font-sans antialiased`}>
+          <AppProviders>
+            {children}
+          </AppProviders>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

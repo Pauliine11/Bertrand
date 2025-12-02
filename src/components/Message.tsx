@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { ChatCompletionMessageParam } from 'openai/resources/chat';
 import ReactMarkdown from 'react-markdown';
+import { CopyButton } from './CopyButton';
 
 type MessageProps = {
   message: ChatCompletionMessageParam;
@@ -18,17 +19,24 @@ export const Message = ({ message }: MessageProps) => {
 
   return (
     <li
-      className={clsx('w-full flex gap-4 p-4 border-[#d4af37] border mt-1 rounded-lg transition-all hover:shadow-md hover:shadow-[#d4af37]/10', {
-        'bg-[#1e293b]': isUser,
-        'bg-[#0f172a]/50 border-[#c9a961]': !isUser,
+      className={clsx('group w-full flex gap-4 p-4 border rounded-lg transition-all hover:shadow-md', {
+        'bg-gray-50 border-gray-200': isUser,
+        'bg-white border-gray-200': !isUser,
       })}
     >
-      <div className="w-12 h-12">
-        <Image src={imageUrl} width={42} height={42} alt="Avatar" />
+      <div className="w-10 h-10 flex-shrink-0">
+        <Image src={imageUrl} width={40} height={40} alt="Avatar" className="rounded-full object-cover" />
       </div>
-      <div className="prose dark:prose-invert w-full">
+      <div className="prose prose-sm md:prose-base w-full flex-1 max-w-none">
         <ReactMarkdown>{content}</ReactMarkdown>
       </div>
+      
+      {/* Bouton Copy - visible au survol pour les messages de l'assistant */}
+      {!isUser && (
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+          <CopyButton text={content} />
+        </div>
+      )}
     </li>
   );
 };

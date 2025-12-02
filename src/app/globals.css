@@ -1,7 +1,31 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* ========== ANIMATION POUR LA SNACKBAR ========== */
+/* ========== CUSTOM SCROLLBAR ========== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* ========== ANIMATIONS ========== */
 @keyframes slide-in {
   from {
     transform: translateY(100%);
@@ -13,6 +37,49 @@
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(-5%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
 .animate-slide-in {
   animation: slide-in 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+}
+
+/* ========== FOCUS STYLES ========== */
+*:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* ========== TYPOGRAPHY - CORMORANT GARAMOND FOR TITLES ========== */
+h1, h2, h3, h4, h5, h6,
+.title,
+.heading {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }

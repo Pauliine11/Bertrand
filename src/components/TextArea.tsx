@@ -13,14 +13,14 @@ export const TextArea = ({ label, ...props }: TextAreaProps) => {
     <div className="">
       <label
         htmlFor={id}
-        className="block mb-2 text-sm font-medium text-[#fdf6e3]"
+        className="block mb-2 text-sm font-medium text-gray-700"
       >
         {label}
       </label>
       <textarea
         id={id}
         rows={4}
-        className="block p-2.5 w-full text-sm text-[#fdf6e3] bg-[#1e293b] rounded-lg border border-[#d4af37] focus:ring-2 focus:ring-[#d4af37] focus:border-[#d4af37] placeholder-[#94a3b8] transition-all"
+        className="block p-3 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500:ring-indigo-400 focus:border-indigo-500:border-indigo-400 placeholder-gray-400 transition-all"
         placeholder="En quoi puis-je vous aider ?"
         {...props}
       ></textarea>

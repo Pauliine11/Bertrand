@@ -4,9 +4,11 @@ import { useState, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ChatCompletionMessageParam } from 'openai/resources/chat';
 import { OpenAIService } from '@/services/openai.service';
+import { useChatContext } from '@/context/ChatContext';
 
 export function useChatMessages() {
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
+  const { currentEmotion, setCurrentEmotion } = useChatContext();
   const ref = useRef<HTMLUListElement>(null);
 
   const mutation = useMutation({
@@ -35,6 +37,25 @@ export function useChatMessages() {
     },
   });
 
+  const analyzeEmotion = async (text: string) => {
+    try {
+      const response = await fetch('/api/analyze-emotion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentEmotion(data);
+      }
+    } catch (error) {
+      console.error('Emotion Analysis Error:', error);
+    }
+  };
+
   const scrollToLastMessage = () => {
     setTimeout(() => {
       ref.current?.children[ref.current?.children.length - 1].scrollIntoView();
@@ -51,7 +72,9 @@ export function useChatMessages() {
     setMessages(newMessages);
     scrollToLastMessage();
     
+    // Trigger parallel processes
     mutation.mutate(newMessages);
+    analyzeEmotion(content);
   };
 
   return {
@@ -60,6 +83,7 @@ export function useChatMessages() {
     sendMessage,
     isLoading: mutation.isPending,
     error: mutation.error,
+    currentEmotion,
   };
 }
 

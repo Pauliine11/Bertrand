@@ -11,6 +11,8 @@
     "pre-push": "npm run check-secrets && git status | grep -q '.env.local' && echo '❌ ERROR: .env.local should not be committed!' && exit 1 || echo '✅ Safe to push'"
   },
   "dependencies": {
+    "@clerk/localizations": "^3.28.5",
+    "@clerk/nextjs": "^6.35.5",
     "@tanstack/react-query": "^5.90.10",
     "@uiw/react-md-editor": "^4.0.8",
     "clsx": "^2.1.1",
@@ -23,7 +25,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
-    "@types/node": "^20",
+    "@types/node": "^20.19.25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.22",

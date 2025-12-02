@@ -9,8 +9,8 @@ export function DraftModeToggle({ isDraftMode, onToggle }: DraftModeToggleProps)
       onClick={onToggle}
       className={`px-4 py-2 rounded-lg font-medium text-sm transition-all border-2 ${
         isDraftMode
-          ? 'bg-[#d4af37] text-[#722f37] border-[#d4af37] font-bold shadow-lg shadow-[#d4af37]/50 animate-pulse'
-          : 'bg-[#722f37] text-[#fdf6e3] border-[#d4af37] hover:bg-[#8b2635]'
+          ? 'bg-indigo-600 text-white border-indigo-600 font-bold shadow-lg shadow-indigo-500/50 animate-pulse'
+          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50:bg-slate-700'
       }`}
       title={
         isDraftMode
@@ -34,4 +34,3 @@ export function DraftModeToggle({ isDraftMode, onToggle }: DraftModeToggleProps)
     </button>
   );
 }
-

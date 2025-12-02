@@ -1,0 +1,218 @@
+/* ========================================
+   THÈME MINIMAL ÉLÉGANT
+   Design épuré, professionnel, style Apple/Notion
+   ======================================== */
+
+:root, .light {
+  /* Couleurs Primaires - MINIMAL ÉLÉGANT */
+  --color-primary: #000000;           /* Noir profond */
+  --color-secondary: #6366f1;         /* Indigo moderne */
+  --color-accent: #8b5cf6;            /* Violet doux */
+  
+  /* Backgrounds - MINIMAL */
+  --color-bg-primary: #ffffff;        /* Blanc pur */
+  --color-bg-secondary: #f9fafb;      /* Gris très clair */
+  --color-bg-tertiary: #f3f4f6;       /* Gris clair */
+  
+  /* Text - MINIMAL */
+  --color-text-primary: #111827;      /* Noir texte */
+  --color-text-secondary: #6b7280;    /* Gris moyen */
+  --color-text-tertiary: #9ca3af;     /* Gris clair */
+  
+  /* Borders - MINIMAL */
+  --color-border-light: #e5e7eb;      /* Gris bordure clair */
+  --color-border-medium: #d1d5db;     /* Gris bordure moyen */
+  
+  /* Shadows - MINIMAL */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+}
+
+/* Spacing (généreux) */
+:root {
+  --spacing-xs: 0.5rem;    /* 8px */
+  --spacing-sm: 1rem;      /* 16px */
+  --spacing-md: 1.5rem;    /* 24px */
+  --spacing-lg: 2rem;      /* 32px */
+  --spacing-xl: 3rem;      /* 48px */
+  --spacing-2xl: 4rem;     /* 64px */
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;   /* 6px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Consolas', 'Monaco', monospace;
+  
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 1.75;
+}
+
+/* ========================================
+   CLASSES UTILITAIRES MINIMALES
+   ======================================== */
+
+.minimal-card {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.minimal-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-medium);
+  transform: translateY(-1px);
+}
+
+.minimal-button {
+  background: var(--color-primary);
+  color: var(--color-bg-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.625rem 1.25rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.minimal-button:hover {
+  background: #1f2937;
+  transform: scale(1.02);
+}
+
+.minimal-button:active {
+  transform: scale(0.98);
+}
+
+.minimal-button-secondary {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-light);
+}
+
+.minimal-button-secondary:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-medium);
+}
+
+.minimal-input {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  line-height: var(--leading-normal);
+  transition: all var(--transition-fast);
+  width: 100%;
+}
+
+.minimal-input:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.minimal-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Text Styles */
+.text-minimal-primary {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+}
+
+.text-minimal-secondary {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  line-height: var(--leading-relaxed);
+}
+
+.text-minimal-tertiary {
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+  line-height: var(--leading-relaxed);
+}
+
+/* Headings */
+.heading-minimal-1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.025em;
+}
+
+.heading-minimal-2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+}
+
+.heading-minimal-3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: var(--leading-tight);
+}
+
+/* Dividers */
+.divider-minimal {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: var(--spacing-lg) 0;
+}
+
+/* Animations */
+@keyframes minimal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.minimal-fade-in {
+  animation: minimal-fade-in 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes minimal-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.minimal-scale-in {
+  animation: minimal-scale-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
