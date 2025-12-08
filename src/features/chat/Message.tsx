@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import Image from 'next/image';
-import { ChatCompletionMessageParam } from 'openai/resources/chat';
+import OpenAI from 'openai';
 import ReactMarkdown from 'react-markdown';
-import { CopyButton } from './CopyButton';
+import { CopyButton } from '@/components/ui/CopyButton';
 
 type MessageProps = {
-  message: ChatCompletionMessageParam;
+  message: OpenAI.Chat.Completions.ChatCompletionMessageParam;
 };
 
 export const Message = ({ message }: MessageProps) => {
@@ -20,14 +20,14 @@ export const Message = ({ message }: MessageProps) => {
   return (
     <li
       className={clsx('group w-full flex gap-4 p-4 border rounded-lg transition-all hover:shadow-md', {
-        'bg-gray-50 border-gray-200': isUser,
-        'bg-white border-gray-200': !isUser,
+        'bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-700': isUser,
+        'bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-800': !isUser,
       })}
     >
       <div className="w-10 h-10 flex-shrink-0">
         <Image src={imageUrl} width={40} height={40} alt="Avatar" className="rounded-full object-cover" />
       </div>
-      <div className="prose prose-sm md:prose-base w-full flex-1 max-w-none">
+      <div className="prose prose-sm md:prose-base w-full flex-1 max-w-none dark:prose-invert">
         <ReactMarkdown>{content}</ReactMarkdown>
       </div>
       

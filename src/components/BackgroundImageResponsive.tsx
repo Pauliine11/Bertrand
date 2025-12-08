@@ -53,7 +53,8 @@ export function BackgroundImageResponsive() {
   const { currentEmotion } = useChatContext();
 
   // Afficher l'image uniquement sur la page de chat et en mode desktop
-  if (pathname !== '/' || !isDesktop) {
+  // Note: La route principale est maintenant /main, donc on vérifie si on est sur /main
+  if (pathname !== '/main' || !isDesktop) {
     return null;
   }
 

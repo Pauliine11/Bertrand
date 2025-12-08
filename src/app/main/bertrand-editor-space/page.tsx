@@ -2,13 +2,13 @@
 
 import React, { FormEvent, useCallback, useState } from "react";
 import MDEditor from '@uiw/react-md-editor';
-import { Loader } from '@/components/Loader';
-import { Message } from '@/components/Message';
-import { TextArea } from '@/components/TextArea';
-import { Snackbar } from '@/components/Snackbar';
-import { DraftModeToggle } from '@/components/DraftModeToggle';
-import { PromptSuggestions } from '@/components/PromptSuggestions';
-import { KeyboardShortcutsHelper } from '@/components/KeyboardShortcutsHelper';
+import { Loader } from '@/components/ui/Loader';
+import { Message } from '@/features/chat/Message';
+import { TextArea } from '@/components/ui/TextArea';
+import { Snackbar } from '@/components/ui/Snackbar';
+import { DraftModeToggle } from '@/features/editor/DraftModeToggle';
+import { PromptSuggestions } from '@/features/chat/PromptSuggestions';
+import { KeyboardShortcutsHelper } from '@/features/editor/KeyboardShortcutsHelper';
 import { useVersionHistory } from '@/hooks/useVersionHistory';
 import { useSnackbar } from '@/hooks/useSnackbar';
 import { useAutoSave } from '@/hooks/useAutoSave';
@@ -181,7 +181,7 @@ export default function BertrandEditorSpace() {
         
         {/* En-tête */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-3">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-center text-gray-900 dark:text-white tracking-tight">
             Éditeur Markdown
           </h1>
           
@@ -273,7 +273,7 @@ export default function BertrandEditorSpace() {
         isMobile && activeTab !== 'chat' ? 'hidden' : 'flex'
       }`}>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-3">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-center text-gray-900 dark:text-white tracking-tight">
             Chat Bertrand
           </h1>
           

@@ -1,9 +1,9 @@
 'use client';
 
 import { FormEvent, KeyboardEvent, useRef, useState } from 'react';
-import { Loader } from '@/components/Loader';
-import { Message } from '@/components/Message';
-import { TextArea } from '@/components/TextArea';
+import { Loader } from '@/components/ui/Loader';
+import { Message } from '@/features/chat/Message';
+import { TextArea } from '@/components/ui/TextArea';
 import { useChatMessages } from '@/hooks/useChatMessages';
 
 export default function Home() {
@@ -43,7 +43,7 @@ export default function Home() {
       */}
       
       <div className="flex-1 flex flex-col gap-6 overflow-auto relative z-10">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-gray-900 tracking-tight leading-tight mt-8 md:mt-12 minimal-fade-in">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-serif text-center text-gray-900 dark:text-white tracking-tight leading-tight mt-8 md:mt-12 minimal-fade-in">
           BERTRAND
         </h1>
         <ul ref={ref} className="flex flex-col flex-1 mt-6 md:mt-8 space-y-4 md:space-y-6">

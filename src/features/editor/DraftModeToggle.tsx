@@ -10,7 +10,7 @@ export function DraftModeToggle({ isDraftMode, onToggle }: DraftModeToggleProps)
       className={`px-4 py-2 rounded-lg font-medium text-sm transition-all border-2 ${
         isDraftMode
           ? 'bg-indigo-600 text-white border-indigo-600 font-bold shadow-lg shadow-indigo-500/50 animate-pulse'
-          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50:bg-slate-700'
+          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700'
       }`}
       title={
         isDraftMode

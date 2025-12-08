@@ -1,25 +1,14 @@
 'use client';
 
-import React, { useState, useRef, useEffect, FormEvent } from 'react';
+import React, { useState, useRef, useEffect, FormEvent, useTransition } from 'react';
 import Image from 'next/image';
-import { Loader } from '@/components/Loader';
 import { useSnackbar } from '@/hooks/useSnackbar';
-import { Snackbar } from '@/components/Snackbar';
+import { Snackbar } from '@/components/ui/Snackbar';
+import { GameState, ChatMessage } from '@/types';
+import { playTurn } from '@/actions/game-actions';
 
 // Types pour le jeu
-interface GameState {
-  character_reply: string;
-  mood: 'sad' | 'angry' | 'neutral' | 'happy' | 'desperate';
-  departure_risk: number;
-  game_over: boolean;
-  game_won: boolean;
-  suggested_actions?: string[];
-}
-
-interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-}
+// (Removed local interfaces)
 
 export default function ImmersiveRPG() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -31,7 +20,7 @@ export default function ImmersiveRPG() {
     game_won: false,
     suggested_actions: ["Qu'est ce qui ne va pas ?", "Lui rappeler Harry et Ron", "Lui offrir une écoute attentive", "Bloquer le passage"]
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { snackbar, showSnackbar } = useSnackbar();
@@ -74,46 +63,37 @@ export default function ImmersiveRPG() {
     e?.preventDefault();
     const userMessage = forcedText || inputText;
 
-    if (!userMessage.trim() || isLoading || gameState.game_over || gameState.game_won) return;
+    if (!userMessage.trim() || isPending || gameState.game_over || gameState.game_won) return;
 
     setInputText('');
-    setIsLoading(true);
-
+    
     // Ajouter le message utilisateur
     const newMessages: ChatMessage[] = [...messages, { role: 'user', content: userMessage }];
     setMessages(newMessages);
 
-    try {
-      const response = await fetch('/api/game/rpg', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages.map(m => ({ role: m.role, content: m.content })) }),
-      });
+    startTransition(async () => {
+      try {
+        const data = await playTurn(newMessages.map(m => ({ role: m.role, content: m.content })));
 
-      if (!response.ok) throw new Error('Erreur de communication avec Hermione');
+        // Mise à jour de l'état du jeu
+        setGameState(data);
 
-      const data: GameState = await response.json();
+        // Ajouter la réponse d'Hermione
+        if (data.character_reply) {
+          setMessages(prev => [...prev, { role: 'assistant', content: data.character_reply }]);
+        }
 
-      // Mise à jour de l'état du jeu
-      setGameState(data);
+        if (data.game_over) {
+          showSnackbar("GAME OVER - Hermione a quitté Poudlard.", "error");
+        } else if (data.game_won) {
+          showSnackbar("VICTOIRE - Hermione a retrouvé espoir !", "success");
+        }
 
-      // Ajouter la réponse d'Hermione
-      if (data.character_reply) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.character_reply }]);
+      } catch (error) {
+        console.error(error);
+        showSnackbar("Une erreur magique est survenue...", "error");
       }
-
-      if (data.game_over) {
-        showSnackbar("GAME OVER - Hermione a quitté Poudlard.", "error");
-      } else if (data.game_won) {
-        showSnackbar("VICTOIRE - Hermione a retrouvé espoir !", "success");
-      }
-
-    } catch (error) {
-      console.error(error);
-      showSnackbar("Une erreur magique est survenue...", "error");
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   // Déterminer la couleur de la jauge
@@ -144,7 +124,7 @@ export default function ImmersiveRPG() {
       <header className="relative z-10 p-6 flex justify-between items-center border-b border-white/10 backdrop-blur-md">
         <div>
           <h1 className="text-3xl font-serif text-indigo-300">Salle Commune</h1>
-          <p className="text-gray-400 text-sm">Il est tard. Hermione est seule.</p>
+          <p className="text-gray-400 text-sm font-serif italic">Il est tard. Hermione est seule.</p>
         </div>
         
         {/* Jauge de Risque de Départ */}
@@ -179,7 +159,7 @@ export default function ImmersiveRPG() {
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-serif text-white mb-2">Hermione Granger</h2>
-            <p className="text-indigo-200 italic font-medium">
+            <p className="text-indigo-200 italic font-medium font-serif text-lg">
               {gameState.mood === 'sad' ? '"C\'est sans espoir..."' :
                gameState.mood === 'angry' ? '"Laissez-moi tranquille !"' :
                gameState.mood === 'happy' ? '"Peut-être avez-vous raison..."' :
@@ -206,7 +186,7 @@ export default function ImmersiveRPG() {
                 </div>
               </div>
             ))}
-            {isLoading && (
+            {isPending && (
               <div className="flex justify-start">
                 <div className="bg-gray-800 p-4 rounded-2xl rounded-bl-none border border-white/5 flex items-center gap-2">
                   <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
@@ -245,7 +225,7 @@ export default function ImmersiveRPG() {
                 <button
                   key={i}
                   onClick={() => handleSendMessage(undefined, action)}
-                  disabled={isLoading}
+                  disabled={isPending}
                   className="whitespace-nowrap px-4 py-2 bg-white/5 hover:bg-indigo-600/20 hover:border-indigo-500/30 border border-white/10 rounded-full text-xs text-gray-300 transition-all hover:text-white"
                 >
                   {action}
@@ -263,11 +243,11 @@ export default function ImmersiveRPG() {
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Que dites-vous à Hermione ?"
                 className="w-full bg-gray-800/50 text-white border border-white/10 rounded-xl pl-4 pr-12 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 placeholder-gray-500 transition-all"
-                disabled={isLoading || gameState.game_over || gameState.game_won}
+                disabled={isPending || gameState.game_over || gameState.game_won}
               />
               <button
                 type="submit"
-                disabled={!inputText.trim() || isLoading || gameState.game_over || gameState.game_won}
+                disabled={!inputText.trim() || isPending || gameState.game_over || gameState.game_won}
                 className="absolute right-2 top-2 bottom-2 aspect-square bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 ➤

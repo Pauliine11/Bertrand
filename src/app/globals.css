@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ========== CUSTOM SCROLLBAR ========== */
 * {
   scrollbar-width: thin;
@@ -76,10 +78,17 @@
 }
 
 /* ========== TYPOGRAPHY - CORMORANT GARAMOND FOR TITLES ========== */
+/* Configuration des variables CSS pour Tailwind v4 */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
 h1, h2, h3, h4, h5, h6,
 .title,
-.heading {
-  font-family: var(--font-cormorant), serif;
-  font-weight: 600;
+.heading,
+.font-serif {
+  font-family: var(--font-serif);
   letter-spacing: -0.01em;
 }

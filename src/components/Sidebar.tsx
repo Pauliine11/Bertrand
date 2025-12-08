@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BertrandLogo } from './BertrandLogo';
+import { BertrandLogo } from '@/components/ui/BertrandLogo';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useSidebar } from '@/hooks/useSidebar';
 
 interface NavItem {
@@ -25,34 +26,34 @@ export function Sidebar({ variant = 'default' }: SidebarProps) {
   
   // Styles conditionnels pour le thème Hogwarts (RPG)
   const theme = {
-    bg: isRPG ? 'bg-gray-950' : 'bg-white',
-    border: isRPG ? 'border-gray-800' : 'border-gray-200',
-    text: isRPG ? 'text-gray-400' : 'text-gray-700',
-    activeBg: isRPG ? 'bg-indigo-900/40 text-indigo-200 border border-indigo-500/30' : 'bg-gray-900 text-white',
-    hoverBg: isRPG ? 'hover:bg-gray-900 hover:text-gray-200' : 'hover:bg-gray-50 hover:text-gray-900',
+    bg: isRPG ? 'bg-gray-950' : 'bg-white dark:bg-gray-900',
+    border: isRPG ? 'border-gray-800' : 'border-gray-200 dark:border-gray-800',
+    text: isRPG ? 'text-gray-400' : 'text-gray-700 dark:text-gray-300',
+    activeBg: isRPG ? 'bg-indigo-900/40 text-indigo-200 border border-indigo-500/30' : 'bg-gray-900 text-white dark:bg-gray-800',
+    hoverBg: isRPG ? 'hover:bg-gray-900 hover:text-gray-200' : 'hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100',
     iconActive: isRPG ? 'text-indigo-400' : '',
-    badge: isRPG ? 'bg-gray-900 text-indigo-400 border border-indigo-900' : 'bg-gray-100 text-gray-700 group-hover:bg-gray-200',
-    footer: isRPG ? 'bg-gray-950 border-gray-800 text-gray-500' : 'bg-white border-gray-200',
-    toggle: isRPG ? 'bg-gray-900 border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+    badge: isRPG ? 'bg-gray-900 text-indigo-400 border border-indigo-900' : 'bg-gray-100 text-gray-700 group-hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300',
+    footer: isRPG ? 'bg-gray-950 border-gray-800 text-gray-500' : 'bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-800',
+    toggle: isRPG ? 'bg-gray-900 border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'
   };
 
   const navItems: NavItem[] = [
     { 
       label: 'Le Chat', 
-      href: '/', 
+      href: '/main', 
       icon: '💬',
       description: 'Conversation avec Bertrand'
     },
     { 
       label: 'Éditeur + Chat', 
-      href: '/bertrand-editor-space', 
+      href: '/main/bertrand-editor-space', 
       icon: '📝',
       badge: 'NEW',
       description: 'Éditeur Markdown & Chat + Mode Draft'
     },
     { 
       label: 'Jeu de Rôle', 
-      href: '/immersive-rpg', 
+      href: '/immersive/immersive-rpg', 
       icon: '​🪄​',
       badge: 'BETA',
       description: 'Scénario immersif avec Hermione'
@@ -110,7 +111,7 @@ export function Sidebar({ variant = 'default' }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="p-4">
+      <nav className="p-4 flex-1">
         <ul className="space-y-2">
           {/* @ts-ignore */}
           {navItems.map((item: NavItem) => {
@@ -193,6 +194,11 @@ export function Sidebar({ variant = 'default' }: SidebarProps) {
 
       {/* Footer */}
       <div className={`absolute bottom-0 left-0 right-0 p-4 border-t ${theme.footer}`}>
+        {isOpen && (
+           <div className="flex justify-center mb-4">
+             <ThemeToggle />
+           </div>
+        )}
         {isOpen ? (
           <div className="text-center">
             <p className={`text-xs ${isRPG ? 'text-gray-600' : 'text-gray-500'}`}>
@@ -203,7 +209,8 @@ export function Sidebar({ variant = 'default' }: SidebarProps) {
             </p>
           </div>
         ) : (
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <ThemeToggle />
             <span className={`text-xs ${isRPG ? 'text-gray-300' : 'text-gray-900'} font-semibold`}>v2</span>
           </div>
         )}

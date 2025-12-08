@@ -17,7 +17,7 @@ export function KeyboardShortcutsHelper() {
       {/* Bouton pour ouvrir/fermer */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-white hover:bg-gray-50:bg-slate-700 text-gray-700 border-2 border-gray-200 rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110"
+        className="bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
         title="Raccourcis clavier"
       >
         <svg
@@ -35,12 +35,12 @@ export function KeyboardShortcutsHelper() {
 
       {/* Panel des raccourcis */}
       {isOpen && (
-        <div className="absolute bottom-16 left-0 bg-white border-2 border-gray-200 rounded-lg shadow-2xl p-4 w-80 animate-slide-in">
+        <div className="absolute bottom-16 left-0 bg-white border-2 border-gray-200 rounded-lg shadow-2xl p-4 w-80 animate-slide-in dark:bg-gray-800 dark:border-gray-700">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-bold text-gray-900">⌨️ Raccourcis Clavier</h3>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">⌨️ Raccourcis Clavier</h3>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-gray-600:text-gray-300 transition-colors"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
             >
               ✕
             </button>
@@ -50,14 +50,14 @@ export function KeyboardShortcutsHelper() {
             {shortcuts.map((shortcut, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-2 rounded bg-gray-50 hover:bg-gray-100:bg-slate-700 transition-colors"
+                className="flex items-center justify-between p-2 rounded bg-gray-50 hover:bg-gray-100 transition-colors dark:bg-gray-700 dark:hover:bg-gray-600"
               >
-                <span className="text-xs text-gray-600">{shortcut.description}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-300">{shortcut.description}</span>
                 <div className="flex gap-1">
                   {shortcut.keys.map((key, i) => (
                     <kbd
                       key={i}
-                      className="px-2 py-1 text-xs font-bold bg-gray-200 text-gray-800 rounded border border-gray-300 shadow-sm"
+                      className="px-2 py-1 text-xs font-bold bg-gray-200 text-gray-800 rounded border border-gray-300 shadow-sm dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500"
                     >
                       {key}
                     </kbd>

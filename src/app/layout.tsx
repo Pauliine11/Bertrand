@@ -1,6 +1,7 @@
 import './globals.css';
 import './themes/minimal.css';
 import { AppProviders } from './providers';
+import { ThemeProvider } from '@/components/ui/ThemeProvider';
 import { Metadata } from 'next';
 import { Geist, Geist_Mono, Cormorant_Garamond } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
@@ -35,9 +36,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider localization={frFR}>
       <html lang="fr" className="min-h-screen">
         <body className={`bg-white text-gray-900 min-h-screen ${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} font-sans antialiased`}>
-          <AppProviders>
-            {children}
-          </AppProviders>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AppProviders>
+              {children}
+            </AppProviders>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
