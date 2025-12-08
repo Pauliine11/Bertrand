@@ -6,12 +6,12 @@ import { useSnackbar } from '@/hooks/useSnackbar';
 import { Snackbar } from '@/components/ui/Snackbar';
 import { GameState, ChatMessage } from '@/types';
 import { playTurn } from '@/actions/game-actions';
-
-// Types pour le jeu
-// (Removed local interfaces)
+import { StoryProgress } from '@/features/story/StoryProgress';
+import { useStoryProgression } from '@/features/story/useStoryProgression';
 
 export default function ImmersiveRPG() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { completeLevel } = useStoryProgression();
   const [gameState, setGameState] = useState<GameState>({
     character_reply: '',
     mood: 'sad',
@@ -22,6 +22,7 @@ export default function ImmersiveRPG() {
   });
   const [isPending, startTransition] = useTransition();
   const [inputText, setInputText] = useState('');
+  const [showGrimoire, setShowGrimoire] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { snackbar, showSnackbar } = useSnackbar();
 
@@ -71,6 +72,13 @@ export default function ImmersiveRPG() {
     const newMessages: ChatMessage[] = [...messages, { role: 'user', content: userMessage }];
     setMessages(newMessages);
 
+    // Vérification de la progression de l'histoire (Logique simple par mots-clés)
+    const lowerMsg = userMessage.toLowerCase();
+    if (lowerMsg.includes('bonjour') || lowerMsg.includes('salut')) completeLevel('chap-1-bibliotheque');
+    if (lowerMsg.includes('wingardium') || lowerMsg.includes('leviosa') || lowerMsg.includes('lévitation')) completeLevel('chap-2-wingardium');
+    if (lowerMsg.includes('écoute') || lowerMsg.includes('ecoute')) completeLevel('chap-3-ecoute');
+    if (lowerMsg.includes('temps') || lowerMsg.includes('retourneur')) completeLevel('chap-4-retourneur');
+
     startTransition(async () => {
       try {
         const data = await playTurn(newMessages.map(m => ({ role: m.role, content: m.content })));
@@ -83,10 +91,11 @@ export default function ImmersiveRPG() {
           setMessages(prev => [...prev, { role: 'assistant', content: data.character_reply }]);
         }
 
-        if (data.game_over) {
-          showSnackbar("GAME OVER - Hermione a quitté Poudlard.", "error");
-        } else if (data.game_won) {
+        if (data.game_won) {
+          completeLevel('chap-5-espoir');
           showSnackbar("VICTOIRE - Hermione a retrouvé espoir !", "success");
+        } else if (data.game_over) {
+          showSnackbar("GAME OVER - Hermione a quitté Poudlard.", "error");
         }
 
       } catch (error) {
@@ -122,9 +131,17 @@ export default function ImmersiveRPG() {
 
       {/* Header du Jeu */}
       <header className="relative z-10 p-6 flex justify-between items-center border-b border-white/10 backdrop-blur-md">
-        <div>
-          <h1 className="text-3xl font-serif text-indigo-300">Salle Commune</h1>
-          <p className="text-gray-400 text-sm font-serif italic">Il est tard. Hermione est seule.</p>
+        <div className="flex items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-serif text-indigo-300">Salle Commune</h1>
+            <p className="text-gray-400 text-sm font-serif italic">Il est tard. Hermione est seule.</p>
+          </div>
+          <button
+            onClick={() => setShowGrimoire(true)}
+            className="ml-4 px-3 py-1 bg-amber-900/50 hover:bg-amber-800/50 border border-amber-700/50 rounded-lg text-amber-200 text-sm font-serif transition-colors flex items-center gap-2"
+          >
+            📜 Grimoire
+          </button>
         </div>
         
         {/* Jauge de Risque de Départ */}
@@ -170,7 +187,7 @@ export default function ImmersiveRPG() {
         </div>
 
         {/* Zone de Chat (Droite) */}
-        <div className="md:w-2/3 flex flex-col bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-2xl overflow-hidden">
+        <div className="md:w-2/3 flex flex-col bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm shadow-2xl overflow-hidden relative">
           
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
@@ -257,8 +274,24 @@ export default function ImmersiveRPG() {
         </div>
       </main>
 
+      {/* Grimoire Overlay */}
+      {showGrimoire && (
+        <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="relative w-full max-w-2xl bg-gray-900 rounded-lg shadow-2xl overflow-hidden animate-scale-in">
+            <button
+              onClick={() => setShowGrimoire(false)}
+              className="absolute top-4 right-4 z-10 text-gray-500 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-full p-2 transition-colors"
+            >
+              ✕
+            </button>
+            <div className="p-6">
+              <StoryProgress />
+            </div>
+          </div>
+        </div>
+      )}
+
       <Snackbar {...snackbar} />
     </div>
   );
 }
-
