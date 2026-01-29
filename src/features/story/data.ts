@@ -2,38 +2,24 @@ import { StoryLevel } from './types';
 
 export const INITIAL_STORY_LEVELS: StoryLevel[] = [
   {
-    id: 'chap-1-bibliotheque',
-    title: "Chapitre 1 : Rencontre à la Bibliothèque",
-    description: "Saluez Hermione Granger qui révise à la bibliothèque. Ne faites pas trop de bruit !",
+    id: 'default-hermione',
+    title: "Bibliothèque de Poudlard - Hermione",
+    description: "Hermione Granger est désespérée et envisage de quitter Poudlard. Parvenez à lui redonner espoir.",
     status: 'unlocked',
-    order: 1
-  },
-  {
-    id: 'chap-2-wingardium',
-    title: "Chapitre 2 : La Plume qui Lévite",
-    description: "Demandez à Hermione de vous apprendre le sortilège de Lévitation (Wingardium Leviosa).",
-    status: 'locked',
-    order: 2
-  },
-  {
-    id: 'chap-3-ecoute',
-    title: "Chapitre 3 : Une Oreille Attentive",
-    description: "Hermione semble stressée. Offrez-lui une écoute attentive pour la calmer.",
-    status: 'locked',
-    order: 3
-  },
-  {
-    id: 'chap-4-retourneur',
-    title: "Chapitre 4 : Le Secret du Temps",
-    description: "Essayez de convaincre Hermione de vous parler de son emploi du temps impossible.",
-    status: 'locked',
-    order: 4
-  },
-  {
-    id: 'chap-5-espoir',
-    title: "Chapitre 5 : Lueur d'Espoir",
-    description: "Réussissez à faire sourire Hermione ou à lui redonner espoir (Victoire).",
-    status: 'locked',
-    order: 5
+    order: 1,
+    content: {
+      character: "Hermione Granger",
+      initial_message: "Je... je ne sais pas ce que je fais encore ici. Tout semble si vain. Je pense que je vais faire mes valises ce soir.",
+      initial_mood: "sad",
+      suggested_actions: [
+        "Saluer doucement",
+        "Demander de l'aide pour un sort",
+        "S'asseoir en silence",
+        "Lui demander ce qui ne va pas"
+      ],
+      context: "Vous êtes dans la bibliothèque de Poudlard. Hermione Granger, normalement brillante et optimiste, semble au bord des larmes, entourée de livres. Elle envisage sérieusement de quitter l'école.",
+      goal: "Redonner espoir à Hermione et la convaincre de rester à Poudlard.",
+      character_personality: "Hermione est intelligente, studieuse mais actuellement désespérée. Elle est sensible aux arguments logiques et à l'empathie."
+    }
   }
 ];

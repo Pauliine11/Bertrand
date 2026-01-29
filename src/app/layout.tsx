@@ -27,20 +27,25 @@ const cormorantGaramond = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: 'Bertrand - Votre Butler Personnel',
-  description: 'Un assistant conversationnel élégant et raffiné',
+  title: 'Le Grimoire Éveillé - Jeu de Rôle Poudlard',
+  description: 'Jeu de rôle immersif dans l\'univers de Poudlard propulsé par l\'IA',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider localization={frFR}>
-      <html lang="fr" className="min-h-screen">
-        <body className={`bg-white text-gray-900 min-h-screen ${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} font-sans antialiased`}>
+      <html lang="fr" className="dark min-h-screen" suppressHydrationWarning>
+        <body className={`bg-gray-900 text-gray-100 min-h-screen ${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} font-sans antialiased`}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
-            enableSystem
+            defaultTheme="dark"
+            enableSystem={false}
             disableTransitionOnChange
+            forcedTheme="dark"
           >
             <AppProviders>
               {children}

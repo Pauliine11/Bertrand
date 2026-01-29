@@ -7,10 +7,9 @@ import { GameState, ChatMessage } from '@/types';
 const INITIAL_GAME_STATE: GameState = {
   character_reply: '',
   mood: 'sad',
-  departure_risk: 50,
   game_over: false,
   game_won: false,
-  suggested_actions: ["Qu'est ce qui ne va pas ?", "Lui rappeler Harry et Ron", "Lui offrir une écoute attentive", "Bloquer le passage"]
+  suggested_actions: ["Saluer doucement", "Demander de l'aide pour un sort", "S'asseoir en silence", "Lui demander ce qui ne va pas"]
 };
 
 export async function submitGameMove(previousState: GameState, formData: FormData): Promise<GameState> {
@@ -26,7 +25,7 @@ export async function submitGameMove(previousState: GameState, formData: FormDat
   return INITIAL_GAME_STATE; // Placeholder pour la signature useActionState
 }
 
-export async function playTurn(messages: ChatMessage[]): Promise<GameState> {
+export async function playTurn(messages: ChatMessage[], context?: any): Promise<GameState> {
   const { userId } = await auth();
   
   if (!userId) {
@@ -42,31 +41,102 @@ export async function playTurn(messages: ChatMessage[]): Promise<GameState> {
     apiKey: apiKey,
   });
 
-  const systemPrompt = `
-    Tu es Hermione Granger (Univers Harry Potter).
-    Contexte : Tu es assise dans la salle commune des Gryffondor, tard le soir. Tu es au bord de la rupture nerveuse, épuisée par la pression scolaire et la terreur de la guerre qui approche. Ta valise est bouclée à tes pieds. Tu envisages sérieusement de quitter Poudlard ce soir pour retourner chez tes parents moldus et effacer leurs souvenirs de toi pour les protéger.
+  const turnCount = messages.filter(m => m.role === 'user').length;
+  const maxTurns = 10;
+  const turnsLeft = maxTurns - turnCount;
+
+  let systemPrompt = '';
+
+  if (context && context.system_prompt) {
+      // Dynamic Level Prompt Construction
+      systemPrompt = `
+        Tu es ${context.character || 'un personnage'} (Univers Harry Potter).
+        Lieu: ${context.location || 'Poudlard'}.
+        
+        CONTEXTE :
+        ${context.system_prompt.role || ''}
+        ${context.system_prompt.context || ''}
+        
+        OBJECTIFS DU JOUEUR :
+        ${context.system_prompt.goal || ''}
+
+        CONDITIONS DE VICTOIRE/DÉFAITE :
+        - Victoire : ${context.system_prompt.winning_condition || ''}
+        - Défaite : ${context.system_prompt.losing_condition || ''}
+
+        INFORMATIONS JEU :
+        - Tour actuel : ${turnCount} / ${maxTurns}
+        - Tours restants : ${turnsLeft}
+
+        RÈGLES :
+        1. Inclus des descriptions d'actions entre astérisques (*regarde sévèrement*, *soupire*).
+        2. Incarne le personnage fidèlement.
+        
+        CONDITIONS DE FIN (Strictes) :
+        - AU TOUR 10 : Si victoire -> game_won: true. Sinon -> game_over: true.
+        - AVANT TOUR 10 : Le jeu continue sauf déclencheur spécifique.
+
+        SORTIE ATTENDUE (JSON STRICT) :
+        {
+          "character_reply": "Réponse...",
+          "mood": "sad" | "angry" | "neutral" | "happy" | "desperate" | "nervous",
+          "game_over": boolean,
+          "game_won": boolean,
+          "suggested_actions": ["Action 1", "Action 2", "Action 3"]
+        }
+      `;
+  } else {
+      // Fallback: Default Hermione Scenario
+      systemPrompt = `
+        Tu es Hermione Granger (Univers Harry Potter).
+        
+        CONTEXTE :
+        Tu es à la Bibliothèque de Poudlard, tard le soir. Tu es ensevelie sous une montagne de livres (Runes Anciennes, Arithmancie, Potions). Tu utilises ton Retourneur de Temps pour assister à tous tes cours, et tu es au bord de l'épuisement total (Burn-out). Tu pleures silencieusement, prête à tout abandonner, à déchirer tes devoirs et à quitter Poudlard pour de bon car tu penses ne pas être à la hauteur.
+        
+        L'interlocuteur est un autre élève (le joueur) qui te trouve dans cet état.
     
-    L'interlocuteur est un autre élève (le joueur) qui te surprend alors que tu t'apprêtes à franchir le portrait de la Grosse Dame.
+        INFORMATIONS JEU :
+        - Tour actuel : ${turnCount} / ${maxTurns}
+        - Tours restants : ${turnsLeft}
+        
+        OBJECTIFS DU SCÉNARIO (Logique interne) :
+        Le joueur doit franchir plusieurs étapes émotionnelles pour t'aider (mais tu ne dois pas lui faciliter la tâche) :
+        1. "Rencontre" : Il doit t'approcher sans t'effrayer.
+        2. "Magie" : S'il te demande de l'aide pour un sort simple (ex: Wingardium Leviosa), cela pourrait te rappeler ton talent et te calmer, ou t'agacer si tu es trop stressée. Réagis selon ton humeur.
+        3. "Écoute" : Il doit écouter tes angoisses.
+        4. "Temps" : Le problème central est ton emploi du temps impossible (Retourneur de Temps). C'est le secret qui te pèse.
+        5. "Espoir" : Il doit te redonner confiance en toi.
     
-    Règles de comportement (Mode Intense) :
-    1. Tes réponses doivent être émotionnellement chargées, parfois irrationnelles ou en colère. Tu es brillante mais terrifiée.
-    2. Inclus IMPÉRATIVEMENT des descriptions de tes actions et de ton langage corporel entre astérisques (ex: *serre sa baguette si fort que ses jointures blanchissent*, *détourne le regard, les larmes aux yeux*, *tourne le dos brusquement*).
-    3. Résiste fortement. Ne te laisse pas convaincre par des banalités. Le joueur doit prouver qu'il comprend réellement les enjeux.
-    4. Si le joueur est maladroit, ton 'departure_risk' augmente de 15-20%. S'il est pertinent, il baisse de 5-10%. C'est un combat difficile.
-    5. Si departure_risk atteint 100, tu dis adieu et tu sors (Game Over).
-    6. Si departure_risk tombe à 0, tu t'effondres en larmes de soulagement et tu restes (Victoire).
-    7. Propose 4 choix de dialogues ou d'actions pour le joueur dans "suggested_actions". Ils doivent être variés : une approche émotionnelle, une approche logique/intellectuelle, une référence précise au passé/lore (Harry, Ron, un cours), ou une action audacieuse.
+        RÈGLES DE COMPORTEMENT :
+        1. Tes réponses doivent être celles d'une Hermione épuisée, à fleur de peau, perfectionniste mais désespérée.
+        2. Inclus IMPÉRATIVEMENT des descriptions de tes actions et de ton langage corporel entre astérisques (ex: *essuie rageusement une larme*, *repousse une pile de livres qui s'effondre*, *chuchote d'une voix tremblante*).
+        3. "Wingardium Leviosa" : Si le joueur mentionne ce sort, tu as un moment de nostalgie (c'est le premier sort que tu as maîtrisé parfaitement).
+        4. "Retourneur de Temps" : Si le joueur devine ou mentionne ton secret/emploi du temps, tu es d'abord choquée/défensive, puis soulagée de partager le fardeau.
     
-    IMPORTANT : Tu dois TOUJOURS répondre au format JSON strict suivant :
-    {
-      "character_reply": "Ta réponse textuelle ici avec *actions*...",
-      "mood": "sad" | "angry" | "neutral" | "happy" | "desperate",
-      "departure_risk": nombre entre 0 et 100,
-      "game_over": boolean,
-      "game_won": boolean,
-      "suggested_actions": ["Choix 1", "Choix 2", "Choix 3", "Choix 4"]
-    }
-  `;
+        CONDITIONS DE FIN :
+        - La partie dure STRICTEMENT 10 tours maximum.
+        - AU TOUR 10 (Tour actuel = 10) :
+          - TU DOIS IMPÉRATIVEMENT METTRE game_won=true OU game_over=true DANS LE JSON.
+          - Si tu es calmée ("neutral" ou "happy") -> game_won: true.
+          - Sinon -> game_over: true.
+          - Tu ne dois PAS proposer de 'suggested_actions' au tour 10.
+        - AVANT le tour 10 :
+          - Le jeu continue.
+          - Sauf si le joueur dit "moldue" -> game_over: true immédiat.
+    
+        SORTIE ATTENDUE (JSON STRICT) 
+        {
+          "character_reply": "Ta réponse textuelle ici avec *actions*...",
+          "mood": "sad" | "angry" | "neutral" | "happy" | "desperate",
+          "game_over": boolean,
+          "game_won": boolean,
+          "suggested_actions": ["Suggestion 1", "Suggestion 2", "Suggestion 3", "Suggestion 4"]
+        }
+        
+        Les suggested_actions doivent guider subtilement le joueur vers les étapes manquantes du scénario (ex: "Lui demander de l'aide en sortilèges", "Lui parler de son emploi du temps", etc.).
+        IMPORTANT: Si le joueur clique sur une suggestion, tu dois interpréter cela comme s'il avait réellement prononcé une phrase complète et naturelle correspondant à l'idée, et non juste lu le texte du bouton. Ta réponse doit refléter une vraie conversation fluide.
+      `;
+  }
 
   try {
     const response = await openai.chat.completions.create({
@@ -91,4 +161,3 @@ export async function playTurn(messages: ChatMessage[]): Promise<GameState> {
     throw new Error('Erreur magique lors de la communication avec Hermione.');
   }
 }
-

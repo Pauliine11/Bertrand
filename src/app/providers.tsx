@@ -3,18 +3,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import { SidebarProvider } from '@/hooks/useSidebar';
-import { ChatProvider } from '@/context/ChatContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 const queryClient = new QueryClient();
 
 export const AppProviders = ({ children }: PropsWithChildren) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChatProvider>
+      <LanguageProvider>
         <SidebarProvider>
           {children}
         </SidebarProvider>
-      </ChatProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 };

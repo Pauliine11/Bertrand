@@ -1,31 +1,30 @@
-# 🎩 Bertrand - Votre Assistant IA Personnel
+# 🪄 Poudlard RPG - Jeu de Rôle Immersif
 
-Application Next.js élégante avec éditeur Markdown et chat IA propulsé par OpenAI.
+Application Next.js de jeu de rôle immersif dans l'univers d'Harry Potter, propulsée par l'IA OpenAI.
 
 ## ✨ Fonctionnalités
 
-### **Core Features**
-- 💬 **Chat IA** - Conversez avec Bertrand propulsé par GPT-3.5
-- 📝 **Éditeur Markdown** - Éditeur avec prévisualisation en temps réel
-- 🔄 **Versioning** - Historique complet avec navigation entre versions
-- 💾 **Auto-save** - Sauvegarde automatique après 2 secondes d'inactivité
-- ✨ **Mode Draft** - L'IA modifie directement votre document
+### **Jeu de Rôle** 🎭
+- 🎮 **Scénarios Immersifs** - Interagissez avec les personnages de Poudlard
+- 🧙 **Personnages Dynamiques** - Hermione, Hagrid, et bien d'autres
+- 😊 **Système d'Émotions** - Les personnages réagissent selon vos actions
+- 🎯 **Objectifs de Niveau** - Chaque niveau a un but à atteindre
+- 📊 **Progression** - Suivez votre avancement dans le grimoire
 
-### **UI/UX Enhancements** ⭐ NEW
-- 🎛️ **Sidebar Collapsible** - Gagnez de l'espace (256px → 64px)
-- ⚡ **Suggestions de Prompts** - Démarrez rapidement avec des templates
-- 📋 **Copy to Clipboard** - Copiez les réponses en un clic
-- ⌨️ **Raccourcis Clavier** - Productivité maximale (Ctrl+S, Ctrl+D, etc.)
-- 🎨 **Interface élégante** - Design raffiné avec sidebar et navigation intelligente
-- 📱 **Layout Responsive** - S'adapte automatiquement à vos besoins
+### **Administration** 🛠️
+- ➕ **Créer des Niveaux** - Interface intuitive pour créer de nouveaux scénarios
+- 🎨 **Personnages Personnalisés** - Ajoutez vos propres personnages avec images
+- 📝 **Configuration JSON** - Contrôle total sur le contenu des niveaux
+- 🗄️ **Base de Données** - Stockage persistant avec Supabase
 
 ## 🚀 Démarrage Rapide
 
 ### Prérequis
 
 - Node.js 18+ 
-- npm ou yarn
+- npm ou pnpm
 - Une clé API OpenAI
+- Un compte Supabase (gratuit)
 
 ### Installation
 
@@ -42,24 +41,60 @@ npm install
 
 3. **Configurer les variables d'environnement**
 
-Copier le fichier d'exemple :
-```bash
-cp .env.example .env.local
-```
-
-Éditer `.env.local` et ajouter votre clé API OpenAI :
+Créer un fichier `.env.local` :
 ```env
+# OpenAI
 NEXT_PUBLIC_OPENAI_KEY=sk-your-actual-api-key-here
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Clerk (Authentication)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-clerk-key
+CLERK_SECRET_KEY=your-clerk-secret
 ```
 
-> 🔑 **Obtenir une clé API:** [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+> 🔑 **Obtenir les clés :**
+> - OpenAI: [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+> - Supabase: [https://supabase.com](https://supabase.com)
+> - Clerk: [https://clerk.com](https://clerk.com)
 
-4. **Lancer le serveur de développement**
+4. **Configurer la base de données**
+
+Exécuter ces commandes SQL dans Supabase :
+
+```sql
+-- Table des niveaux
+CREATE TABLE levels (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  description TEXT,
+  order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  content JSONB,
+  user_id TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Table de progression
+CREATE TABLE user_level_progress (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id TEXT NOT NULL,
+  level_id UUID REFERENCES levels(id),
+  is_completed BOOLEAN DEFAULT false,
+  completed_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, level_id)
+);
+```
+
+5. **Lancer le serveur de développement**
 ```bash
 npm run dev
 ```
 
-5. **Ouvrir dans le navigateur**
+6. **Ouvrir dans le navigateur**
 ```
 http://localhost:3000
 ```
@@ -68,124 +103,138 @@ http://localhost:3000
 
 ```
 src/
-├── app/                           # Pages Next.js (App Router)
-│   ├── layout.tsx                # Layout racine avec Navbar
-│   ├── page.tsx                  # Page d'accueil (Chat)
-│   └── bertrand-editor-space/    # Page Éditeur + Chat
-├── components/                    # Composants réutilisables
-│   ├── Navbar.tsx               # Navigation
-│   ├── BertrandLogo.tsx         # Logo SVG
-│   ├── Snackbar.tsx             # Notifications
-│   ├── DraftModeToggle.tsx      # Bouton Mode Draft
+├── app/
+│   ├── immersive/immersive-rpg/  # Jeu de rôle principal
+│   ├── admin/levels/new/         # Création de niveaux
+│   └── api/                      # API routes
+├── components/
+│   ├── Sidebar.tsx               # Navigation
+│   └── ui/                       # Composants UI
+├── features/
+│   └── story/                    # Logique du jeu
+│       ├── useStoryProgression.ts
+│       ├── StoryProgress.tsx
+│       └── data.ts
+├── actions/
+│   ├── game-actions.ts           # Actions serveur du jeu
+│   └── progression-actions.ts    # Progression utilisateur
+└── lib/
+    └── supabase.ts               # Client Supabase
+
+public/
+├── hermione/                     # Images Hermione
+│   ├── neutral.jpg
+│   ├── sad.jpg
+│   ├── happy.jpg
+│   ├── angry.jpg
+│   └── desperate.jpg
+├── hagrid/                       # Images Hagrid
 │   └── ...
-├── hooks/                         # Hooks personnalisés
-│   ├── useChatMessages.ts       # Logique chat
-│   ├── useChatWithDraft.ts      # Chat avec mode Draft
-│   ├── useVersionHistory.ts     # Versioning
-│   ├── useDraftMode.ts          # Mode Draft
-│   ├── useSnackbar.ts           # Notifications
-│   └── useAutoSave.ts           # Auto-save
-└── services/                      # Services
-    └── openai.service.ts         # Service OpenAI
+└── PERSONNAGES_GUIDE.md         # Guide des images
 ```
 
-## 🎯 Fonctionnalités Détaillées
+## 🎮 Guide d'Utilisation
 
-### Mode Chat
-- Conversation avec l'IA
-- Historique des messages
-- Interface responsive
+### Jouer à un Niveau
 
-### Éditeur Markdown
-- Édition en temps réel
-- Prévisualisation instantanée
-- Syntaxe Markdown complète
+1. Lancez l'application et accédez au **Jeu de Rôle**
+2. Sélectionnez un niveau disponible
+3. Interagissez avec le personnage via le chat
+4. Les émotions du personnage changent selon vos réponses
+5. Atteignez l'objectif pour compléter le niveau
 
-### Versioning
-- Sauvegarde de chaque version
-- Navigation entre versions (← →)
-- Suppression de versions
-- Timestamps automatiques
+### Créer un Nouveau Niveau
 
-### Mode Draft ✨
-Active un mode spécial où l'IA modifie directement votre document.
+1. Allez dans **Admin** > **Créer des niveaux**
+2. Remplissez les informations :
+   - **Titre** : Nom du niveau
+   - **Description** : Brève description
+   - **Ordre** : Position dans la liste
+   - **Contenu (JSON)** : Configuration du niveau
 
-**Comment l'utiliser :**
-1. Cliquez sur "📝 Mode Draft"
-2. Le contenu de l'éditeur est automatiquement partagé avec l'IA
-3. Tapez une instruction : "Corrige les fautes", "Traduis en anglais"...
-4. La réponse remplace le contenu de l'éditeur
+Exemple de contenu JSON :
+```json
+{
+  "character": "Hagrid",
+  "initial_message": "Bonjour ! Bienvenue dans ma cabane...",
+  "initial_mood": "happy",
+  "suggested_actions": [
+    "Saluer Hagrid",
+    "Demander des informations",
+    "Parler des créatures magiques"
+  ],
+  "context": "Hagrid est dans sa cabane...",
+  "goal": "Découvrir le secret de la cabane",
+  "character_personality": "Hagrid est gentil mais mystérieux..."
+}
+```
 
-**Cas d'usage :**
-- Correction orthographique
-- Amélioration de style
-- Traduction
-- Reformatage
-- Résumé/développement
+3. Cliquez sur **Créer le niveau**
 
-Plus de détails : voir [DRAFT_MODE.md](./DRAFT_MODE.md)
+### Ajouter un Nouveau Personnage
 
-## ⌨️ Raccourcis Clavier
+1. Créez un dossier dans `/public/` avec le prénom du personnage :
+   ```
+   /public/draco/
+   ```
 
-Travaillez plus vite avec ces raccourcis :
+2. Ajoutez 5 images JPG :
+   - `neutral.jpg` (Expression neutre)
+   - `sad.jpg` (Triste)
+   - `happy.jpg` (Joyeux)
+   - `angry.jpg` (En colère)
+   - `desperate.jpg` (Désespéré)
 
-| Raccourci | Action | Description |
-|-----------|--------|-------------|
-| `Ctrl/Cmd + S` | Sauvegarder | Sauvegarde et télécharge le document |
-| `Ctrl/Cmd + D` | Toggle Draft | Active/désactive le Mode Draft |
-| `Ctrl/Cmd + K` | Focus Chat | Place le curseur dans le champ de chat |
+3. Créez un niveau avec ce personnage dans l'Admin
 
-💡 Cliquez sur l'icône ⌨️ en bas à gauche pour voir tous les raccourcis disponibles.
+4. Le système chargera automatiquement les images ! 🎨
+
+Plus de détails : voir [PERSONNAGES_GUIDE.md](./public/PERSONNAGES_GUIDE.md)
+
+## 🎨 Technologies
+
+- **Next.js 15** - Framework React
+- **TypeScript** - Typage statique
+- **Tailwind CSS** - Styles
+- **OpenAI API** - IA conversationnelle
+- **Supabase** - Base de données PostgreSQL
+- **Clerk** - Authentification
+- **React Query** - Gestion d'état
+- **Zod** - Validation de formulaires
+
+## 📚 Documentation
+
+- [FEATURES.md](./documentation/FEATURES.md) - Fonctionnalités détaillées
+- [PERSONNAGES_GUIDE.md](./public/PERSONNAGES_GUIDE.md) - Guide des images
+- [CODE_STRUCTURE.md](./documentation/CODE_STRUCTURE.md) - Architecture
+
+## 🐛 Problèmes Courants
+
+### Images ne s'affichent pas
+→ Vérifiez que les images existent dans `/public/[personnage]/` avec les bons noms
+
+### Niveau en double
+→ Supprimez le doublon dans Supabase avec :
+```sql
+DELETE FROM levels WHERE id = 'id-du-doublon';
+```
+
+### "Could not find the 'content' column"
+→ Ajoutez la colonne dans Supabase :
+```sql
+ALTER TABLE levels ADD COLUMN IF NOT EXISTS content JSONB;
+```
 
 ## 🔒 Sécurité
 
-### Variables d'Environnement
-
-**✅ Fichiers ignorés par Git :**
-- `.env.local` (votre clé API)
-- `.env` 
-
-**⚠️ Ne JAMAIS commiter :**
-- Vos clés API
-- `.env.local`
+⚠️ **Ne JAMAIS commiter :**
+- `.env.local` (vos clés API)
 - Fichiers contenant des secrets
 
-### Vérification avant Push
-
-Avant de pousser sur GitHub :
-
+Avant de push :
 ```bash
-# Vérifier qu'aucun fichier sensible n'est tracké
-git status
-
-# Vérifier le .gitignore
-cat .gitignore
-
-# S'assurer que .env.local est ignoré
 git check-ignore .env.local
 # Devrait afficher: .env.local
-```
-
-### Si vous avez déjà commit une clé
-
-Si vous avez accidentellement commit votre clé API :
-
-1. **Révoquer immédiatement la clé** sur [OpenAI](https://platform.openai.com/api-keys)
-2. **Créer une nouvelle clé**
-3. **Nettoyer l'historique Git :**
-```bash
-# Option 1: Supprimer le fichier de l'historique
-git filter-branch --force --index-filter \
-  "git rm --cached --ignore-unmatch .env.local" \
-  --prune-empty --tag-name-filter cat -- --all
-
-# Option 2: Utiliser git-filter-repo (recommandé)
-git-filter-repo --path .env.local --invert-paths
-```
-
-4. **Force push** (attention : destructif)
-```bash
-git push origin --force --all
 ```
 
 ## 🛠️ Scripts Disponibles
@@ -204,59 +253,18 @@ npm start
 npm run lint
 ```
 
-## 📚 Documentation
+## 🎯 Roadmap
 
-- [CODE_STRUCTURE.md](./CODE_STRUCTURE.md) - Architecture détaillée
-- [DRAFT_MODE.md](./DRAFT_MODE.md) - Guide du Mode Draft
-
-## 🎨 Technologies
-
-- **Next.js 15** - Framework React
-- **TypeScript** - Typage statique
-- **Tailwind CSS** - Styles
-- **OpenAI API** - Intelligence artificielle
-- **React Query** - Gestion d'état et requêtes
-- **@uiw/react-md-editor** - Éditeur Markdown
-
-## 🐛 Problèmes Courants
-
-### "API Key not configured"
-→ Vérifiez que `.env.local` existe et contient votre clé
-
-### "Module not found"
-→ Lancez `npm install`
-
-### "Port already in use"
-→ Changez le port : `PORT=3001 npm run dev`
-
-### Erreur OpenAI
-→ Vérifiez vos crédits sur [platform.openai.com](https://platform.openai.com)
-
-## 🤝 Contribution
-
-Les contributions sont les bienvenues !
-
-1. Fork le projet
-2. Créez une branche (`git checkout -b feature/amazing-feature`)
-3. Commit vos changements (`git commit -m 'Add amazing feature'`)
-4. Push vers la branche (`git push origin feature/amazing-feature`)
-5. Ouvrez une Pull Request
+- [ ] Plus de personnages par défaut
+- [ ] Système de points/récompenses
+- [ ] Mode multijoueur
+- [ ] Générateur de niveaux assisté par IA
+- [ ] Sons et musique d'ambiance
 
 ## 📄 Licence
 
 Ce projet est sous licence MIT.
 
-## 👨‍💻 Auteur
-
-Votre nom - [@votre-github](https://github.com/votre-username)
-
-## 🙏 Remerciements
-
-- OpenAI pour l'API GPT
-- Next.js team
-- La communauté open source
-
 ---
 
-**Fait avec ❤️ et beaucoup de ☕**
-# Bertrand
+**Fait avec 🪄 et beaucoup de ☕**

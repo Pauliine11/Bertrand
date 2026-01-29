@@ -1,25 +1,22 @@
 import React from 'react';
 import { useStoryProgression } from './useStoryProgression';
 import { StoryLevel } from './types';
+import { useLanguage } from '@/context/LanguageContext';
 
 export const StoryProgress = () => {
+  const { t } = useLanguage();
   const { levels, currentLevel, progressPercentage } = useStoryProgression();
 
   return (
-    <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 shadow-sm font-serif">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-amber-900">Grimoire de Progression</h2>
-        <span className="text-amber-700 text-sm font-bold">{Math.round(progressPercentage)}% complété</span>
+    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 shadow-xl font-serif">
+      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+        <h2 className="text-2xl font-serif text-gray-200 flex items-center gap-2">
+          <span className="text-2xl">📖</span>
+          {t('progress.title')}
+        </h2>
       </div>
 
-      <div className="w-full bg-amber-200 rounded-full h-2.5 mb-6">
-        <div 
-          className="bg-amber-600 h-2.5 rounded-full transition-all duration-500" 
-          style={{ width: `${progressPercentage}%` }}
-        ></div>
-      </div>
-
-      <div className="space-y-4">
+      <div className="space-y-3">
         {levels.map((level) => (
           <LevelItem key={level.id} level={level} isCurrent={currentLevel?.id === level.id} />
         ))}
@@ -37,21 +34,34 @@ const LevelItem = ({ level, isCurrent }: { level: StoryLevel, isCurrent: boolean
     }
   };
 
-  const getOpacity = () => {
-    if (level.status === 'locked') return 'opacity-50';
-    return 'opacity-100';
+  const getStyles = () => {
+    if (level.status === 'completed') {
+      return 'bg-green-900/20 border-l-4 border-green-500';
+    } else if (level.status === 'unlocked') {
+      return 'bg-indigo-900/20 border-l-4 border-indigo-500';
+    } else {
+      return 'bg-gray-900/20 border-l-4 border-gray-600 opacity-50';
+    }
   };
 
   return (
-    <div className={`flex items-start gap-3 p-3 rounded-md transition-colors ${getOpacity()} ${isCurrent ? 'bg-amber-100 ring-1 ring-amber-300' : ''}`}>
+    <div className={`
+      flex items-start gap-3 p-4 rounded-lg
+      transition-colors
+      ${getStyles()}
+      ${isCurrent ? 'ring-1 ring-indigo-500' : ''}
+    `}>
       <span className="text-2xl" role="img" aria-label={level.status}>
         {getIcon()}
       </span>
-      <div>
-        <h3 className={`font-bold text-amber-900 ${level.status === 'completed' ? 'line-through decoration-amber-900/50' : ''}`}>
+      <div className="flex-1 min-w-0">
+        <h3 className={`
+          font-semibold text-gray-200 mb-1
+          ${level.status === 'completed' ? 'line-through decoration-green-500/50' : ''}
+        `}>
           {level.title}
         </h3>
-        <p className="text-amber-800 text-sm leading-relaxed">
+        <p className="text-sm text-gray-400 leading-relaxed">
           {level.description}
         </p>
       </div>

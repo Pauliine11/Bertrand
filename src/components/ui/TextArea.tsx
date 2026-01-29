@@ -6,8 +6,9 @@ type TextAreaProps = {
   label: string;
 } & ComponentPropsWithoutRef<'textarea'>;
 
-export const TextArea = ({ label, ...props }: TextAreaProps) => {
-  const id = useId();
+export const TextArea = ({ label, id: providedId, ...props }: TextAreaProps) => {
+  const generatedId = useId();
+  const id = providedId || generatedId;
 
   return (
     <div className="">

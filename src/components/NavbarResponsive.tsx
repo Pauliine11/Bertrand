@@ -1,6 +1,7 @@
 'use client';
 
 import { useSidebar } from '@/hooks/useSidebar';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   SignInButton,
   SignUpButton,
@@ -15,14 +16,21 @@ interface NavbarProps {
 
 export function NavbarResponsive({ variant = 'default' }: NavbarProps) {
   const { isOpen, toggle, isMobile } = useSidebar();
+  const { language, setLanguage, t } = useLanguage();
   const isRPG = variant === 'immersive';
 
   const theme = {
-    nav: isRPG ? 'bg-gray-950/80 border-gray-800 shadow-lg shadow-indigo-900/10' : 'bg-white/80 border-gray-200 shadow-sm',
-    text: isRPG ? 'text-indigo-100' : 'text-gray-900',
-    icon: isRPG ? 'text-indigo-300 hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100:bg-slate-800',
-    button: isRPG ? 'bg-indigo-600 text-white hover:bg-indigo-500 border border-indigo-500' : 'minimal-button',
-    buttonSecondary: isRPG ? 'text-indigo-200 hover:text-white hover:bg-white/10' : 'minimal-button-secondary'
+    nav: isRPG 
+      ? 'bg-gray-900/95 border-gray-700/50 shadow-lg' 
+      : 'bg-white/80 border-gray-200 shadow-sm',
+    text: isRPG ? 'text-gray-100' : 'text-gray-900',
+    icon: isRPG ? 'text-gray-400 hover:bg-gray-800 hover:text-gray-200' : 'text-gray-700 hover:bg-gray-100',
+    button: isRPG 
+      ? 'bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-500/50' 
+      : 'minimal-button',
+    buttonSecondary: isRPG 
+      ? 'text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-700' 
+      : 'minimal-button-secondary'
   };
 
   return (
@@ -57,14 +65,45 @@ export function NavbarResponsive({ variant = 'default' }: NavbarProps) {
 
         {/* Titre - responsive */}
         <div className="flex-1 flex justify-center md:justify-start">
-          <h1 className={`text-base sm:text-lg md:text-xl font-bold tracking-tight ${theme.text}`}>
-            <span className="hidden md:inline">BERTRAND - Votre Butler Personnel</span>
-            <span className="md:hidden">BERTRAND</span>
+          <h1 className={`text-base sm:text-lg md:text-xl font-semibold ${theme.text}`}>
+            <span className="hidden md:inline">{t('nav.title')}</span>
+            <span className="md:hidden">{t('nav.titleShort')}</span>
           </h1>
         </div>
 
-        {/* Authentification Clerk à droite */}
+        {/* Language Selector + Authentification Clerk à droite */}
         <div className="flex items-center gap-2 md:gap-3">
+          {/* Language Selector */}
+          <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+            <button
+              onClick={() => setLanguage('fr')}
+              className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                language === 'fr'
+                  ? isRPG 
+                    ? 'bg-indigo-600 text-white' 
+                    : 'bg-gray-900 text-white'
+                  : isRPG
+                    ? 'text-gray-400 hover:text-gray-200'
+                    : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              FR
+            </button>
+            <button
+              onClick={() => setLanguage('en')}
+              className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
+                language === 'en'
+                  ? isRPG 
+                    ? 'bg-indigo-600 text-white' 
+                    : 'bg-gray-900 text-white'
+                  : isRPG
+                    ? 'text-gray-400 hover:text-gray-200'
+                    : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              EN
+            </button>
+          </div>
           <SignedOut>
             <SignUpButton mode="modal">
               <button className={`${theme.buttonSecondary} text-xs md:text-sm px-3 md:px-4 py-2 rounded-lg transition-colors`}>

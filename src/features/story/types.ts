@@ -6,5 +6,6 @@ export interface StoryLevel {
   description: string;
   status: LevelStatus;
   order: number;
+  content?: any; // JSON content for dynamic levels
 }
 
